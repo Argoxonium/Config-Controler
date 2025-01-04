@@ -49,6 +49,7 @@ class ConfigManager(metaclass=Singleton):
         get(section, option): Retrieves the value for the given section and option.
         get_all(): Returns a dictionary of all configuration sections and their key/value pairs.
     """
+
     def __init__(self, config_path = None):
         """
         Initializes the ConfigManager with the specified configuration path.
@@ -56,21 +57,43 @@ class ConfigManager(metaclass=Singleton):
         Args:
             config_path (str): The path to the configuration file to be managed. If None, defaults to 'config.ini'.
         """
-        self.config = configparser.ConfigParser() #need to call and not inharent because metalass and subclass are already in Configparser.
+        self.config = configparser.ConfigParser()
         self.config_path = config_path
         self.config.read(config_path)
 
+
     def __str__(self):
+        """Returns a string representation showing the path from which the configuration is loaded."""
         return f"🔍 ConfigManager loaded from: {self.config_path}"
 
+
     def get(self, section: str, option: str):
+        """
+        Retrieves a configuration value based on the specified section and option.
+
+        Args:
+            section (str): The section in the configuration file.
+            option (str): The option within that section.
+
+        Returns:
+            The value as a string, or None if the option does not exist.
+        """
         try:
             return self.config.get(section, option)
         except configparser.NoOptionError:
             return None
 
+
     def get_all(self):
+        """
+        Returns all the configuration settings as a nested dictionary where each key is a section and its value is another dictionary
+        of key/value pairs within that section.
+
+        Returns:
+            A dictionary of sections with their corresponding options and values.
+        """
         return {section: dict(self.config.items(section)) for section in self.config.sections()}
+
 
 def check_redirect() -> str:
     """
