@@ -1,23 +1,61 @@
 import os
 import configparser
 
+
+
 class Singleton(type):
     """
-    This class is a metaclass addition to any class to force the creation of one instance of a class within a program. This is key
-    for the ConfigManager since it config gets imported 
+    A metaclass that ensures a class has only one instance throughout the execution of a program. It implements the Singleton pattern
+    which is beneficial for managing resources like configuration settings, where exactly one object is needed to coordinate actions across 
+    the system. It uses a dictionary to store instances of the classes it creates, preventing multiple instantiations.
+
+    Attributes:
+    _instances (dict): A dictionary mapping class types to their instantiated objects.
+
+    Usage:
+    To apply, define a class and set its metaclass to Singleton. Any subsequent instantiations will return the same instance.
     """
+    #create a global class variable to 
     _instances = {}
+
     def __call__(cls, *args, **kwargs):
+        """
+        Call method that manages the instantiation of classes and ensures only one instance per class.
+        If the class does not exist in the instances dictionary, it creates a new instance and stores it.
+        Subsequent calls return the stored instance.
+
+        Args:
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+
+        Returns:
+            The single instance of the class.
+        """
         if cls not in cls._instances:
             cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
         return cls._instances[cls]
     
 class ConfigManager(metaclass=Singleton):
     """
-    Manages the config, allowing you to pull information and get info when needed. In addition save information when needed to the
-    config file.
+    Manages application configurations, providing a centralized interface to access and modify settings.
+    This class leverages the Singleton pattern to ensure only one configuration manager instance manages the config file
+    operations throughout the application lifecycle, promoting consistency and preventing conflicts.
+
+    Attributes:
+        config (ConfigParser): An instance of ConfigParser to read and write to the configuration file.
+        config_path (str): Path to the configuration file.
+
+    Methods:
+        get(section, option): Retrieves the value for the given section and option.
+        get_all(): Returns a dictionary of all configuration sections and their key/value pairs.
     """
     def __init__(self, config_path = None):
+        """
+        Initializes the ConfigManager with the specified configuration path.
+
+        Args:
+            config_path (str): The path to the configuration file to be managed. If None, defaults to 'config.ini'.
+        """
         self.config = configparser.ConfigParser() #need to call and not inharent because metalass and subclass are already in Configparser.
         self.config_path = config_path
         self.config.read(config_path)
