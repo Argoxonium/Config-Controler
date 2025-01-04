@@ -6,9 +6,10 @@ It includes functionalities to:
 - Read and write configuration settings.
 - Automatically determine and handle redirects for configuration file locations.
 
-Modules:
-- ConfigManager: Defines the class and functions related to configuration management.
-- [Other Modules]: Describe other modules in this package if applicable.
-
 The `config` instance created in this package is meant to be imported and used across the application.
 """
+from .ConfigManager import ConfigManager, check_redirect
+
+config = ConfigManager(check_redirect())
+
+__all__ = ['config']
