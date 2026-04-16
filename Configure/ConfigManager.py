@@ -83,6 +83,23 @@ class ConfigManager(metaclass=Singleton):
         except configparser.NoOptionError:
             return None
 
+    def getbool(self, section: str, option: str) -> bool:
+        """
+        Retrieves a configuration value and converts it to a boolean.
+        Accepts common truthy/falsey strings like: true/false, yes/no, 1/0, on/off.
+        """
+        try:
+            value = self.config.get(section, option)
+        except configparser.NoOptionError:
+            return False  # or raise, depending on your preference
+
+        return value.strip().lower() in ("true", "1", "yes", "on")
+    
+    def getint(self, section, option):
+        return int(self.get(section, option))
+
+    def getfloat(self, section, option):
+        return float(self.get(section, option))
 
     def get_all(self):
         """
