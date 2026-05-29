@@ -100,6 +100,33 @@ class ConfigManager(metaclass=Singleton):
 
     def getfloat(self, section, option):
         return float(self.get(section, option))
+    
+    def getlist(self, section: str, option: str, vartype=str, delimiter="|"):
+        """
+        Retrieves a delimited configuration value and converts it into a list of the given type.
+
+        Args:
+            section (str): Config section name.
+            option (str): Option key.
+            vartype (type): Desired type for each list item (str, int, float).
+            delimiter (str): Character separating list items.
+
+        Returns:
+            list: A list of converted values.
+        """
+        try:
+            raw = self.config.get(section, option)
+        except configparser.NoOptionError:
+            return []
+
+        items = [item.strip() for item in raw.split(delimiter) if item.strip()]
+
+        # Convert each item to the requested type
+        try:
+            return [vartype(item) for item in items]
+        except ValueError as e:
+            raise ValueError(f"Failed to convert list items in '{section}.{option}' to {vartype}: {e}")
+
 
     def get_all(self):
         """
